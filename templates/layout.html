@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+ <head>
+   <!-- Example of an if statement in html -->
+   {% if title %}
+     <title> FarmDuino - {{ title }}</title>
+   {% else %}
+     <title> FarmDuino </title>
+   {% endif %}
+ </head>
+
+ <body>
+   {% block content %}{% endblock %}
+ </body>
+</html>

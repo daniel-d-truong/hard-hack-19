@@ -1,0 +1,11 @@
+<!-- Idea of Template Inheritance using "extends " -->
+{% extends "layout.html" %}
+{% block content %}
+   <!-- Example of a for loop in html -->
+  {% for post in updates %}
+    <h2> {{ post.title }}</h2>
+    <p> {{ post.content }} </p>
+    <h5> By {{ post.author }} </h5>
+    <h6> On {{ post.date_posted}}</h6>
+  {% endfor %}
+{% endblock content %}
