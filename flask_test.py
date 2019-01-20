@@ -14,8 +14,40 @@ import io
 import google
 import json
 import random
+from threading import Thread
+from time import sleep
 
 app = Flask(__name__) #__name__ just means the name of module in python
+
+
+
+#google-cloud
+bucket_name = 'hard-hack'
+storage_client = storage.Client()
+bucket = storage_client.get_bucket(bucket_name);
+filecount = 0
+buttonPressed = False
+
+# #new thread
+def continuous_download(args):
+    file_count = 0
+
+    while (True):
+            filename = str(file_count)+ '.bmp'
+            blob = bucket.blob(filename)
+            if (blob.exists()):
+                download_blob(filename, "images/"+filename)
+                file_count+=1
+            sleep(1)
+
+def setData(num):
+    filecount = num
+    data.append(detect_faces('images/'+str(filecount)+'.bmp'))
+    sleep(1)
+
+def getState():
+    return buttonPressed
+
 #firebase authentication
 firebase_admin.initialize_app()
 firebase = firebase.FirebaseApplication('https://hard-hack-19-229121.firebaseio.com/', None)
@@ -28,8 +60,21 @@ JOY = '/joy'
 SORROWFUL = '/sorrowful'
 ANGER = '/anger'
 # array of emotions
-emotions = [EMOTIONLESS, SURPRISE, JOY, SORROWFUL, ANGER]
+emotions = [EMOTIONLESS, JOY, SURPRISE,  SORROWFUL, ANGER]
 
+def download_blob(source_blob_name, destination_file_name):
+    blob = bucket.blob(source_blob_name)
+    blob.download_to_filename(destination_file_name)
+
+    print ('Blob {} downloaded to {}.'.format(
+        source_blob_name,
+        destination_file_name
+    ))
+
+def delete_blob(blob_name):
+    blob = bucket.blob(blob_name)
+    blob.delete()
+    print('Blob {} deleted.'.format(blob_name))
 
 def detect_faces(uri):
     """Detects faces in images"""
@@ -59,6 +104,7 @@ def detect_faces(uri):
         sorrow_val = likelihood_name[face.sorrow_likelihood]
         # likelihood values array
         emotion_vals = [anger_val, joy_val, surprise_val, sorrow_val]
+        print (emotion_vals)
 
         max = 0
         final_emotion = emotions[max]
@@ -71,19 +117,31 @@ def detect_faces(uri):
         result = firebase.get(final_emotion, None)
         random_index = random.randint(0,8)
         print (final_emotion+ " | Index: " + str(random_index))
-        return result[random_index]
-
-testPath = "images/canada-head.jpg"
+        return (result[random_index], final_emotion)
 
 
-#for i in range(20):
-    #detect_faces("william-test/"+str(i)+".bmp")
+data = ['1.bmp', '2.jpg', 'happy.jpeg']
+
+imagePath = "images/"
+testPath = imagePath+"2.jpg"
+
+
 
 @app.route("/") #pathway of url
-@app.route("/home")
 def home():
-    return render_template('home.html', url=detect_faces(testPath)) #var is same name as var in html
+    y = random.randint(0, 2)
+    x = detect_faces(imagePath+data[y])
+    return render_template('home.html', url=x[0], emotion=x[1][1:]) #var is same name as var in html
 
+# @app.route("/home")
+# def index():
+#     count = random.randint(0, 11)
+#     while detect_faces(imagePath+data[count]) == None:
+#         count = random.randint(0,10)
+#     x = detect_faces(imagePath+data[count])
+#     return render_template('home.html', url=imagePath+x[0], emotion=x[1][1:])
+
+# +"?autoplay=1"
 
 # @app.route("/about") #pathway of url
 # def about():
@@ -92,4 +150,8 @@ def home():
 #allows app to run & turns debug mode on using Python (w/o bash)
 #__main__ is the name of the main module that runs (kinda like main method in Java)
 if __name__ == '__main__':
+    # thread = Thread(target = continuous_download, args=[1])
+    # thread.start()
+    # thread.join()
     app.run(debug=True)
+    print ('thread has ended')
