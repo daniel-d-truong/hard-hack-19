@@ -82,7 +82,7 @@ testPath = "images/canada-head.jpg"
 @app.route("/") #pathway of url
 @app.route("/home")
 def home():
-    return render_template('home.html', url="https://www.youtube.com/watch?v=Tch4v0L0GHA") #var is same name as var in html
+    return render_template('home.html', url=detect_faces(testPath)) #var is same name as var in html
 
 
 # @app.route("/about") #pathway of url
