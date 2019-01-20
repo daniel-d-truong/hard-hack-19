@@ -6,21 +6,6 @@ from flask import Flask, render_template
 import io
 app = Flask(__name__) #__name__ just means the name of module in python
 
-updates = [
-  {
-    'author': 'Antony Nguyen',
-    'title': 'This Project Sucks',
-    'content': 'Good riddance, I\'m being toxic. ',
-    'date_posted': '10/31/18'
-  },
-  {
-    'author': 'William Martino',
-    'title': 'Butt Plugs Rule!',
-    'content': 'Can we please just make a butt plug. ',
-    'date_posted': '11/01/18'
-  },
-
-]
 
 def detect_faces(uri):
     """Detects faces in an images"""
@@ -28,7 +13,7 @@ def detect_faces(uri):
     client = vision.ImageAnnotatorClient()
     # image = vision.types.Image()
     # image.source.image_uri = uri
-
+    print (uri)
     with io.open(uri, 'rb') as image_file:
         content = image_file.read()
     image = vision.types.Image(content=content)
@@ -45,25 +30,25 @@ def detect_faces(uri):
         print('anger: {}'.format(likelihood_name[face.anger_likelihood]))
         print('joy: {}'.format(likelihood_name[face.joy_likelihood]))
         print('surprise: {}'.format(likelihood_name[face.surprise_likelihood]))
+        print('sorrowful: {}'.format(likelihood_name[face.sorrow_likelihood]))
 
         vertices = (['({},{})'.format(vertex.x, vertex.y)
                     for vertex in face.bounding_poly.vertices])
 
         print('face bounds: {}'.format(','.join(vertices)))
-
-testPath = "images/canada-head.jpg"
-detect_faces(testPath)
-
-x=[1,2,3]
+#
+# testPath = "images/4.bmp"
+for i in range(20):
+    detect_faces("william-test/"+str(i)+".bmp")
 
 @app.route("/") #pathway of url
 @app.route("/home")
 def home():
-    return render_template('home.html', t=x) #var is same name as var in html
+    return render_template('index.html') #var is same name as var in html
 
-@app.route("/about") #pathway of url
-def about():
-    return render_template('about.html', title = "About")
+# @app.route("/about") #pathway of url
+# def about():
+#     return render_template('about.html', title = "About")
 
 #allows app to run & turns debug mode on using Python (w/o bash)
 #__main__ is the name of the main module that runs (kinda like main method in Java)
