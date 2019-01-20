@@ -3,12 +3,36 @@
 # Sources of Help: https://www.youtube.com/watch?v=QnDWIZuWYW0&m=19
 
 from flask import Flask, render_template
+from firebase import firebase
+import firebase_admin
+from firebase_admin import credentials
+from firebase_admin import db
+from google.cloud import storage
+from google.oauth2 import service_account
+from google.auth.transport.requests import AuthorizedSession
 import io
+import google
+import json
+import random
+
 app = Flask(__name__) #__name__ just means the name of module in python
+#firebase authentication
+firebase_admin.initialize_app()
+firebase = firebase.FirebaseApplication('https://hard-hack-19-229121.firebaseio.com/', None)
+result = firebase.get('/anger', None)
+print (result[0])
+
+EMOTIONLESS = '/emotionless'
+SURPRISE = '/surprise'
+JOY = '/joy'
+SORROWFUL = '/sorrowful'
+ANGER = '/anger'
+# array of emotions
+emotions = [EMOTIONLESS, SURPRISE, JOY, SORROWFUL, ANGER]
 
 
 def detect_faces(uri):
-    """Detects faces in an images"""
+    """Detects faces in images"""
     from google.cloud import vision
     client = vision.ImageAnnotatorClient()
     # image = vision.types.Image()
@@ -27,24 +51,39 @@ def detect_faces(uri):
 
     print ('Faces:')
     for face in faces:
-        print('anger: {}'.format(likelihood_name[face.anger_likelihood]))
-        print('joy: {}'.format(likelihood_name[face.joy_likelihood]))
-        print('surprise: {}'.format(likelihood_name[face.surprise_likelihood]))
-        print('sorrowful: {}'.format(likelihood_name[face.sorrow_likelihood]))
+        # finds value for likelihood of each emotion
+        emotionless_val = likelihood_name[2]
+        anger_val = likelihood_name[face.anger_likelihood]
+        joy_val = likelihood_name[face.joy_likelihood]
+        surprise_val = likelihood_name[face.surprise_likelihood]
+        sorrow_val = likelihood_name[face.sorrow_likelihood]
+        # likelihood values array
+        emotion_vals = [anger_val, joy_val, surprise_val, sorrow_val]
 
-        vertices = (['({},{})'.format(vertex.x, vertex.y)
-                    for vertex in face.bounding_poly.vertices])
+        max = 0
+        final_emotion = emotions[max]
 
-        print('face bounds: {}'.format(','.join(vertices)))
-#
-# testPath = "images/4.bmp"
-for i in range(20):
-    detect_faces("william-test/"+str(i)+".bmp")
+        # if one emotion is more likely, it is set to final_emotion
+        for x in range(1, 4):
+            if likelihood_name.index(emotion_vals[x]) > likelihood_name.index(emotion_vals[max]):
+                final_emotion = emotions[x]
+                max = x
+        result = firebase.get(final_emotion, None)
+        random_index = random.randint(0,8)
+        print (final_emotion+ " | Index: " + str(random_index))
+        return result[random_index]
+
+testPath = "images/canada-head.jpg"
+
+
+#for i in range(20):
+    #detect_faces("william-test/"+str(i)+".bmp")
 
 @app.route("/") #pathway of url
 @app.route("/home")
 def home():
-    return render_template('index.html') #var is same name as var in html
+    return render_template('home.html', url="https://www.youtube.com/watch?v=Tch4v0L0GHA") #var is same name as var in html
+
 
 # @app.route("/about") #pathway of url
 # def about():
