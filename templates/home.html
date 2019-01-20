@@ -1,11 +1,33 @@
-<!-- Idea of Template Inheritance using "extends " -->
-{% extends "layout.html" %}
-{% block content %}
-   <!-- Example of a for loop in html -->
-  {% for post in updates %}
-    <h2> {{ post.title }}</h2>
-    <p> {{ post.content }} </p>
-    <h5> By {{ post.author }} </h5>
-    <h6> On {{ post.date_posted}}</h6>
-  {% endfor %}
-{% endblock content %}
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+</head>
+<body>
+	<nav class='navbar navbar-default'>
+		<h1>Todo List</h1>
+	</nav>
+	<div class='jumbotron'>
+		<form class='form-group' action='/' method='post'>
+			<label for='name'>Enter all the tasks to be performed</label>
+			<input type='text' name='name' class='form-control'><br>
+			<button class='btn btn-primary' type='submit' name='submit' value='add'>Submit</button>
+			<button class='btn btn-danger' type='submit' name='submit' value='delete'>Delete</button>
+		</form>
+	</div>
+
+	<div class='container-fluid'>
+		{% for l in t %}
+			<ul class='list-group'>
+				<li class='list-group-item'>
+					{{l}}
+				</li>
+			</ul>
+		{% endfor %}
+	</div>
+</body>
+</html>

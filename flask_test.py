@@ -54,10 +54,12 @@ def detect_faces(uri):
 testPath = "images/canada-head.jpg"
 detect_faces(testPath)
 
+x=[1,2,3]
+
 @app.route("/") #pathway of url
 @app.route("/home")
 def home():
-    return render_template('home.html', updates = updates) #var is same name as var in html
+    return render_template('home.html', t=x) #var is same name as var in html
 
 @app.route("/about") #pathway of url
 def about():
