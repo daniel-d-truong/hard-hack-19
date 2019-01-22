@@ -1,1 +1,3 @@
-# hard-hack-19
+# Vines Assist
+
+The purpose of this hackathon project was to create a website that can detect your face and your emotions, and play a vine that corresponds to that emotion. We used Google Cloud Vision API in order to detect a person's face and read their emotions. We would also use an Arduino Camera Module as the camera. We would then connect this to a Python Flask Webserver, and use firebase and Google Cloud Storage in order to store different vine videos, links, and the photos taken by the camera. Finally, we used HTML/CSS and Javascript in order to code the front end website and the website would play a random video link from firebase. Even though we weren't able to finish, we are proud of how far we were able to get. 
